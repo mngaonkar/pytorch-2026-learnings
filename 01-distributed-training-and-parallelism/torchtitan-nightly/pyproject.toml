@@ -1,0 +1,32 @@
+[project]
+name = "torchtitan-nightly-rocm"
+version = "0.1.0"
+description = "TorchTitan main on AMD's ROCm nightly PyTorch (gfx1201)"
+requires-python = "==3.12.*"
+dependencies = [
+    # AMD ROCm nightly: PyTorch 2.16 pre-release built against ROCm 10.3 pre-release, 2026-11-01
+    "torch[device-gfx1201]==2.16.0a0+rocm10.3.0a20261101",
+    # exact pins required by that torch wheel's METADATA
+    "rocm[libraries]==10.3.0a20261101",
+    "triton==3.9.0+gitb7ddcf86.rocm10.3.0a20261101",
+    "torchtitan",
+]
+
+[[tool.uv.index]]
+name = "amd-nightly-pytorch"
+url = "https://nightly.repo.amd.com/rocm/pytorch/whl-next/"
+
+[[tool.uv.index]]
+name = "amd-nightly-core"
+url = "https://nightly.repo.amd.com/rocm/core/whl-next/"
+
+[tool.uv]
+# rocm-sdk-core and friends are nightly pre-releases pulled in transitively
+prerelease = "allow"
+index-strategy = "unsafe-best-match"
+# tokenizers 1.0.0rc3 (pre-release) drops AddedToken, which torchtitan imports
+constraint-dependencies = ["tokenizers<1"]
+
+[tool.uv.sources]
+# TorchTitan main, pinned to the commit that was tested
+torchtitan = { git = "https://github.com/pytorch/torchtitan", rev = "83abb2c039ebeffdef27907ea7e33b6174061651" }
