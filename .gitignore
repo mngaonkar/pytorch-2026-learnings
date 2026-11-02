@@ -15,3 +15,8 @@ grpo-add/
 *.pt.trace.json
 
 .DS_Store
+
+# rocprofv3_trace.sh and tracelens_report.sh output
+rocpd-output-data/
+*_results.db
+*_perf_report.xlsx

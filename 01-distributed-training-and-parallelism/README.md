@@ -88,6 +88,6 @@ NGPU=2 COMM_BACKEND=fake MODULE=my_recipes CONFIG=llama3_8b_cp2 ./run_train.sh
 
 **Source session:** "TorchTitan GraphTrainer: LLM Distributed Training with PyTorch's Compiler Toolkit" (Sanket Jayant Purandare, Sherlock Huang).
 
-**Run** from the TorchTitan checkout root (upstream `run_train.sh` on `PATH`'s `./`), with `my_recipes.py` beside it. `COMM_BACKEND=fake` starts one process and builds the same device mesh as a 2-GPU job, with `NGPU` as the logical world size. Use it to catch degrees that do not multiply to `NGPU`, a missing context-parallel attention, or shapes that do not divide. Collectives do no real communication, so it says nothing about multi-rank speed or numerical agreement.
+**Run** from the TorchTitan checkout root, so `./run_train.sh` resolves to the upstream script there, with `my_recipes.py` beside it. `COMM_BACKEND=fake` starts one process and builds the same device mesh as a 2-GPU job, with `NGPU` as the logical world size. Use it to catch degrees that do not multiply to `NGPU`, a missing context-parallel attention, or shapes that do not divide. Collectives do no real communication, so it says nothing about multi-rank speed or numerical agreement.
 
 The fake process still allocates one rank's weights, gradients, optimizer state, and activations. An 8B model split over two ranks needs a large GPU for the dry run itself. On a smaller GPU, check recipe logic with `llama3_debugmodel` from `torchtitan_recipes.tests.models.llama3` first.
