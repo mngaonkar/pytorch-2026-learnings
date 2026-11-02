@@ -1,4 +1,4 @@
-# train.py  -- run with: torchrun --nproc_per_node=2 train.py
+# fsdp2_train.py  -- run with: torchrun --nproc_per_node=2 fsdp2_train.py
 import os
 import torch
 import torch.nn as nn

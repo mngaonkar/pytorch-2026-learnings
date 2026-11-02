@@ -1,3 +1,4 @@
+# bench_eager_vs_compiled.py
 import time
 import torch
 import torch.nn as nn

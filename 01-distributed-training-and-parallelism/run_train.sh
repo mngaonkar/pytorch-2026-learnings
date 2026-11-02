@@ -1,3 +1,4 @@
+# run_train.sh
 NGPU=${NGPU:-"8"}
 export LOG_RANK=${LOG_RANK:-0}
 MODULE=${MODULE:-"torchtitan_recipes.tests.models.llama3"}

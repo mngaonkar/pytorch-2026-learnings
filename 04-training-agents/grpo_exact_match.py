@@ -1,4 +1,4 @@
-# pip install trl datasets
+# grpo_exact_match.py  -- pip install trl datasets
 import re
 from datasets import Dataset
 from trl import GRPOConfig, GRPOTrainer
