@@ -14,7 +14,7 @@ cd pytorch-2026-learnings
 uv sync
 ```
 
-`uv sync` reads `.python-version` (3.12), creates `.venv`, and installs the pins from `pyproject.toml`:
+`uv sync` reads `.python-version` (3.12), creates `.venv`, and installs the pins from `pyproject.toml` (add `--extra titan` for TorchTitan, see below):
 
 - `[[tool.uv.index]]` adds AMD's index, `https://stable.repo.amd.com/rocm/whl-next/`, so `torch` and `rocm` resolve to ROCm builds instead of the CPU-only wheels on PyPI.
 - `torch[device-gfx1201]==2.14.0+rocm10.1.0` is PyTorch 2.14.0 built against ROCm 10.1.0, with GPU code for `gfx1201` (Radeon RX 9070 XT). Resolving it also pulls in a ROCm build of Triton.
@@ -50,6 +50,29 @@ uv run rocprofv3 --sys-trace -- python profile_steps.py
 
 A system ROCm in `/opt/rocm` from a different release may not recognize newer GPUs, and a mismatched `rocprofv3` can abort while tracing.
 
+### TorchTitan (section 1)
+
+The TorchTitan snippets in `01-distributed-training-and-parallelism` use **TorchTitan v0.3.0**, the release that targets stable torch 2.14 and so works with this ROCm 10.1 environment. TorchTitan `main` and v0.4.0 need a nightly torch. `pyproject.toml` pins it in an optional extra, so plain `uv sync` does not need it:
+
+```bash
+# in the folder that contains pytorch-2026-learnings
+git clone --branch v0.3.0 https://github.com/pytorch/torchtitan
+
+cd pytorch-2026-learnings
+uv sync --extra titan
+cp 01-distributed-training-and-parallelism/my_recipes.py ../torchtitan/
+
+cd ../torchtitan
+NGPU=1 uv run --project ../pytorch-2026-learnings ./run_train.sh --training.local_batch_size 2 --training.seq_len 512
+```
+
+- `[project.optional-dependencies] titan = ["torchtitan==0.3.0"]` adds TorchTitan only when you ask for it with `--extra titan`.
+- `[tool.uv] override-dependencies = ["datasets>=5.1.0", "spmd-types==0.2.3"]` replaces TorchTitan 0.3.0's own `datasets<4.8.0` pin and keeps `spmd-types` at 0.2.3, the combination tested with `torch 2.14.0+rocm10.1.0`.
+- Run TorchTitan from its checkout root with `uv run --project ../pytorch-2026-learnings`. The checkout has its own `pyproject.toml`, and a plain `uv run` there would build a separate environment with the CPU-only torch.
+- On a 16 GB GPU, the default debug run peaks at about 13.7 GiB. Stop other GPU jobs first, or keep the two small-batch flags above (about 0.43 GiB).
+
+See [`01-distributed-training-and-parallelism/README.md`](01-distributed-training-and-parallelism/README.md) for each script.
+
 ## Structure
 
 ```
@@ -73,7 +96,7 @@ The new AMD scripts were tested on one Radeon RX 9070 XT (`gfx1201`, 16 GB) with
 | TorchTitan context-parallel recipe | [`01-distributed-training-and-parallelism/my_recipes.py`](01-distributed-training-and-parallelism/my_recipes.py) |
 | `NGPU=2` launch of `llama3_8b_cp2` | [`01-distributed-training-and-parallelism/launch_llama3_8b_cp2.sh`](01-distributed-training-and-parallelism/launch_llama3_8b_cp2.sh) |
 | `run_train.sh` excerpt | [`01-distributed-training-and-parallelism/run_train.sh`](01-distributed-training-and-parallelism/run_train.sh) |
-| `COMM_BACKEND=fake` dry run | [`01-distributed-training-and-parallelism/dry_run_fake_backend.sh`](01-distributed-training-and-parallelism/dry_run_fake_backend.sh) |
+| `COMM_MODE=fake_backend` dry run | [`01-distributed-training-and-parallelism/dry_run_fake_backend.sh`](01-distributed-training-and-parallelism/dry_run_fake_backend.sh) |
 | Eager vs fused memory diagram | [`02-compilers-and-kernels/README.md`](02-compilers-and-kernels/README.md) |
 | Eager vs `torch.compile` benchmark | [`02-compilers-and-kernels/bench_eager_vs_compiled.py`](02-compilers-and-kernels/bench_eager_vs_compiled.py) |
 | Graph-break report | [`02-compilers-and-kernels/find_graph_breaks.py`](02-compilers-and-kernels/find_graph_breaks.py) |
