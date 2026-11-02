@@ -4,14 +4,21 @@ import torch
 import torch.nn as nn
 import torch.distributed as dist
 from torch.distributed.fsdp import fully_shard
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 dist.init_process_group()                      # torchrun sets rank/world size
 rank = int(os.environ["LOCAL_RANK"])
 if torch.accelerator.is_available():
     torch.accelerator.set_device_index(rank)    # one GPU per process
     device = torch.accelerator.current_accelerator()
+    logging.info(f"Using GPU {device}")
 else:
     device = torch.device("cpu")
+    logging.info("Using CPU")
 
 class Block(nn.Module):
     def __init__(self, d):

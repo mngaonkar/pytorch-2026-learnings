@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "numpy>=2.5.3",
     "rocm[device-gfx1201,libraries]==10.1.0",
     "torch[device-gfx1201]==2.14.0+rocm10.1.0",
     "torchaudio==2.11.0.3+rocm10.1.0",
