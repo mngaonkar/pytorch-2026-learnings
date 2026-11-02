@@ -11,5 +11,13 @@ dependencies = [
     "torchaudio==2.11.0.3+rocm10.1.0",
 ]
 
+[project.optional-dependencies]
+# TorchTitan v0.3.0 targets stable torch 2.14; main/v0.4.0 needs a nightly torch
+titan = ["torchtitan==0.3.0"]
+
 [[tool.uv.index]]
 url = "https://stable.repo.amd.com/rocm/whl-next/"
+
+[tool.uv]
+# keep these when TorchTitan is installed next to the ROCm torch pins
+override-dependencies = ["datasets>=5.1.0", "spmd-types==0.2.3"]
