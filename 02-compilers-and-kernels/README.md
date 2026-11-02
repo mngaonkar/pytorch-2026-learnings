@@ -45,21 +45,22 @@ Expect `graphs: 2 breaks: 1`, then a reason that mentions the builtin `print`. E
 
 ## `torch_logs.sh`
 
-The article's logging commands, for a training script named `train.py` in the working directory:
+Runs the two compiler snippets in this folder under PyTorch's compile logs:
 
 ```bash
-TORCH_LOGS=graph_breaks python train.py   # where and why graphs split
-TORCH_LOGS=recompiles python train.py     # shape changes that trigger recompiles
+# torch_logs.sh
+TORCH_LOGS=graph_breaks python find_graph_breaks.py         # where and why graphs split
+TORCH_LOGS=recompiles python bench_eager_vs_compiled.py     # shape changes that trigger recompiles
 ```
 
 **Source session:** "Advancing torch.compile for Verifiable Precision & Dynamic Shapes" (Xiyuan Wang).
 
-**Requirements:** PyTorch, and a file called `train.py` in the current directory. The commands are unchanged from the article, so they look up that name. Copy a real training script to `train.py`, or run the same environment variables against your own entry point. `../01-distributed-training-and-parallelism/fsdp2_train.py` is one such script; it still needs `torchrun` and the `LOCAL_RANK` environment that script reads. `graph_breaks` logs the file, line, and reason of each break. `recompiles` logs each guard that failed, such as a tensor size change. GPU requirements are whatever that training script already has.
+**Requirements:** PyTorch. Both commands use the scripts next to this file: `find_graph_breaks.py` for graph breaks, and `bench_eager_vs_compiled.py` for recompiles. CPU is enough. The recompile command follows the same CPU C++ build requirement as the benchmark (`g++` and `Python.h`). `graph_breaks` logs the file, line, and reason of each break. `recompiles` logs each guard that failed, such as a tensor size change.
 
-**Run** from a directory that contains `train.py`:
+**Run** from this directory:
 
 ```bash
-bash /path/to/torch_logs.sh
+bash torch_logs.sh
 ```
 
 ## `triton_vector_add.py`

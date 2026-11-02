@@ -24,7 +24,7 @@ ASCII diagrams live in the folder README. Shell files are the article's commands
 
 | Article block | Where it lives |
 |---|---|
-| FSDP2 training script (`train.py` in the article) | [`01-distributed-training-and-parallelism/fsdp2_train.py`](01-distributed-training-and-parallelism/fsdp2_train.py) |
+| FSDP2 training script | [`01-distributed-training-and-parallelism/fsdp2_train.py`](01-distributed-training-and-parallelism/fsdp2_train.py) |
 | TorchTitan context-parallel recipe | [`01-distributed-training-and-parallelism/my_recipes.py`](01-distributed-training-and-parallelism/my_recipes.py) |
 | `NGPU=2` launch of `llama3_8b_cp2` | [`01-distributed-training-and-parallelism/launch_llama3_8b_cp2.sh`](01-distributed-training-and-parallelism/launch_llama3_8b_cp2.sh) |
 | `run_train.sh` excerpt | [`01-distributed-training-and-parallelism/run_train.sh`](01-distributed-training-and-parallelism/run_train.sh) |

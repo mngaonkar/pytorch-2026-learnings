@@ -1,4 +1,4 @@
-# pip install openai   (server: vllm serve Qwen/Qwen2.5-0.5B-Instruct --enable-prefix-caching)
+# measure_ttft.py  -- pip install openai   (server: vllm serve Qwen/Qwen2.5-0.5B-Instruct --enable-prefix-caching)
 import time
 from openai import OpenAI
 

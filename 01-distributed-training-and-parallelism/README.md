@@ -4,7 +4,7 @@ Two ways to split a training step, copied from the article. `fsdp2_train.py` sha
 
 ## `fsdp2_train.py`
 
-Builds a four-block residual MLP, calls `fully_shard` on each block and then on the root, creates AdamW after sharding, and trains for five steps on random inputs. The file comment in the article names this script `train.py`.
+Builds a four-block residual MLP, calls `fully_shard` on each block and then on the root, creates AdamW after sharding, and trains for five steps on random inputs.
 
 **Source session:** "Transformers.distributed: Bringing First-Class Distributed Training to 2.4M+ Hugging Face Models" (Ferdinand Mom).
 
