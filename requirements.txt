@@ -1,0 +1,27 @@
+# Snippets from "From Parallelism to Profiling" (PyTorch Conference 2026).
+# Install: pip install -r requirements.txt
+#
+# Pick a PyTorch build for your machine (CPU or GPU):
+# https://pytorch.org/get-started/locally/
+#
+# trl and vllm are optional. Uncomment a line to install it.
+# triton is optional and is only imported by the vector-add kernel.
+# A GPU build of PyTorch often already provides triton.
+# tensorboard is optional; it only views traces written by profile_steps.py.
+
+torch
+transformers
+datasets
+openai
+
+# optional — GRPO trainer (04-training-agents/grpo_exact_match.py)
+# trl
+
+# optional — vLLM server (03-inference-and-serving/vllm_serve.sh)
+# vllm
+
+# optional — Triton kernel (02-compilers-and-kernels/triton_vector_add.py)
+# triton
+
+# optional — view profiler traces (05-profiling-and-data-loading/profile_steps.py)
+# tensorboard
