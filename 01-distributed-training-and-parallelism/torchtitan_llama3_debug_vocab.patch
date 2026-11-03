@@ -1,0 +1,14 @@
+cat << 'EOF' > torchtitan_llama3_debug_vocab.patch
+--- a/torchtitan/models/llama3/__init__.py
++++ b/torchtitan/models/llama3/__init__.py
+@@ -28,7 +28,7 @@
+ llama3_configs = {
+     "debugmodel": ModelArgs(
+-        dim=256, n_layers=6, n_heads=16, vocab_size=2048, rope_theta=500000
++        dim=256, n_layers=6, n_heads=16, vocab_size=128256, rope_theta=500000
+     ),
+     "270m": ModelArgs(
+         dim=1024,
+         n_layers=16,
+EOF
+
