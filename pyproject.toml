@@ -5,11 +5,30 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "datasets>=5.1.0",
+    "grain>=0.2.18",
+    "jax>=0.12.0.1",
     "numpy>=2.5.3",
-    "rocm[device-gfx1201,libraries]==10.1.0",
-    "torch[device-gfx1201]==2.14.0+rocm10.1.0",
-    "torchaudio==2.11.0.3+rocm10.1.0",
+    "rocm[device-gfx1201,libraries]==10.1.0a20260909",
+    "spmd-types>=0.3.1",
+    "tokenizers>=0.23.3",
+    "torch-remat>=0.2.2",
+    "torch[device-gfx1201]==2.15.0a0+rocm10.1.0a20260909",
+    "torchtitan",
+    "transformers>=5.22.1",
+]
+
+[tool.uv]
+prerelease = "allow"
+index-strategy = "unsafe-best-match"
+environments = [
+    "sys_platform == 'linux' and python_version == '3.12'",
 ]
 
 [[tool.uv.index]]
-url = "https://stable.repo.amd.com/rocm/whl-next/"
+url = "https://nightly.repo.amd.com/rocm/pytorch/whl-next/"
+
+[[tool.uv.index]]
+name = "rocm-core-nightly"
+url = "https://nightly.repo.amd.com/rocm/core/whl-next/"
+explicit = false
