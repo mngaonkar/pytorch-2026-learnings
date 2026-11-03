@@ -50,11 +50,23 @@ uv run rocprofv3 --sys-trace -- python profile_steps.py
 
 A system ROCm in `/opt/rocm` from a different release may not recognize newer GPUs, and a mismatched `rocprofv3` can abort while tracing.
 
+## Newer TorchTitan on the ROCm nightly
+
+TorchTitan `main` uses PyTorch APIs that no stable ROCm build has yet, so it lives in its own uv project: [`01-distributed-training-and-parallelism/torchtitan-nightly/`](01-distributed-training-and-parallelism/torchtitan-nightly/). It installs AMD's ROCm nightly PyTorch (tested with `torch[device-gfx1201]==2.16.0a0+rocm10.3.0a20261101`, ROCm `10.3.0a20261101`; any ROCm nightly from late October 2026 or later should work) and shows TorchTitan's newer context-parallel API, `ContextParallelTransform` with `AllGatherKVVarlenInnerAttention`. Stable `2.14.0+rocm10.1.0` and the newest 2.15/ROCm 10.1 nightly (`2.15.0a0+rocm10.1.0a20260910`) are too old for TorchTitan `main`; the folder README explains why.
+
+```bash
+cd 01-distributed-training-and-parallelism/torchtitan-nightly
+bash setup_torchtitan_nightly.sh   # clone TorchTitan at the tested commit, uv sync, check the APIs
+bash train_debugmodel_1gpu.sh      # real single-GPU run
+bash dry_run_cp2_fake.sh           # CP=2 recipe on one GPU with fake communication
+```
+
 ## Structure
 
 ```
 00-rocm-setup/                             ROCm install check and GPU selection
 01-distributed-training-and-parallelism/   FSDP2 script, TorchTitan context-parallel recipe and launch commands
+  torchtitan-nightly/                      TorchTitan main on the ROCm nightly torch (separate uv project)
 02-compilers-and-kernels/                  eager vs compile, graph breaks, Triton add, fusion diagram
 03-inference-and-serving/                  vLLM serve (pip and ROCm Docker), prefix-cache latency client, KV-cache diagram
 04-training-agents/                        GRPO exact-match reward, agent-loop diagram
@@ -74,6 +86,11 @@ The new AMD scripts were tested on one Radeon RX 9070 XT (`gfx1201`, 16 GB) with
 | `NGPU=2` launch of `llama3_8b_cp2` | [`01-distributed-training-and-parallelism/launch_llama3_8b_cp2.sh`](01-distributed-training-and-parallelism/launch_llama3_8b_cp2.sh) |
 | `run_train.sh` excerpt | [`01-distributed-training-and-parallelism/run_train.sh`](01-distributed-training-and-parallelism/run_train.sh) |
 | `COMM_BACKEND=fake` dry run | [`01-distributed-training-and-parallelism/dry_run_fake_backend.sh`](01-distributed-training-and-parallelism/dry_run_fake_backend.sh) |
+| Nightly uv environment | [`01-distributed-training-and-parallelism/torchtitan-nightly/pyproject.toml`](01-distributed-training-and-parallelism/torchtitan-nightly/pyproject.toml) |
+| Nightly setup and API check | [`01-distributed-training-and-parallelism/torchtitan-nightly/setup_torchtitan_nightly.sh`](01-distributed-training-and-parallelism/torchtitan-nightly/setup_torchtitan_nightly.sh), [`check_nightly.py`](01-distributed-training-and-parallelism/torchtitan-nightly/check_nightly.py) |
+| `ContextParallelTransform` recipe (TorchTitan main) | [`01-distributed-training-and-parallelism/torchtitan-nightly/my_recipes.py`](01-distributed-training-and-parallelism/torchtitan-nightly/my_recipes.py) |
+| Single-GPU debug run (TorchTitan main) | [`01-distributed-training-and-parallelism/torchtitan-nightly/train_debugmodel_1gpu.sh`](01-distributed-training-and-parallelism/torchtitan-nightly/train_debugmodel_1gpu.sh) |
+| CP=2 fake-backend dry run (TorchTitan main) | [`01-distributed-training-and-parallelism/torchtitan-nightly/dry_run_cp2_fake.sh`](01-distributed-training-and-parallelism/torchtitan-nightly/dry_run_cp2_fake.sh) |
 | Eager vs fused memory diagram | [`02-compilers-and-kernels/README.md`](02-compilers-and-kernels/README.md) |
 | Eager vs `torch.compile` benchmark | [`02-compilers-and-kernels/bench_eager_vs_compiled.py`](02-compilers-and-kernels/bench_eager_vs_compiled.py) |
 | Graph-break report | [`02-compilers-and-kernels/find_graph_breaks.py`](02-compilers-and-kernels/find_graph_breaks.py) |

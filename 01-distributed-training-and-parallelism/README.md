@@ -91,3 +91,7 @@ NGPU=2 COMM_BACKEND=fake MODULE=my_recipes CONFIG=llama3_8b_cp2 ./run_train.sh
 **Run** from the TorchTitan checkout root, so `./run_train.sh` resolves to the upstream script there, with `my_recipes.py` beside it. `COMM_BACKEND=fake` starts one process and builds the same device mesh as a 2-GPU job, with `NGPU` as the logical world size. Use it to catch degrees that do not multiply to `NGPU`, a missing context-parallel attention, or shapes that do not divide. Collectives do no real communication, so it says nothing about multi-rank speed or numerical agreement.
 
 The fake process still allocates one rank's weights, gradients, optimizer state, and activations. An 8B model split over two ranks needs a large GPU for the dry run itself. On a smaller GPU, check recipe logic with `llama3_debugmodel` from `torchtitan_recipes.tests.models.llama3` first.
+
+## TorchTitan `main` on the ROCm nightly
+
+[`torchtitan-nightly/`](torchtitan-nightly/) is a separate uv project for TorchTitan `main`, which needs a ROCm nightly PyTorch from late October 2026 or later (tested with `2.16.0a0+rocm10.3.0a20261101`). It contains a `ContextParallelTransform` recipe with `AllGatherKVVarlenInnerAttention`, a single-GPU training script and a CP=2 fake-backend dry run. See its README for setup, results and why stable 2.14 and the 2.15/ROCm 10.1 nightly do not work.
